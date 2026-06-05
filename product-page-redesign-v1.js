@@ -51,7 +51,19 @@
     ".kf-pp-breadcrumb span{color:#D4A574;margin:0 0.5rem}",
 
     // Hero — 2-column gallery + info
-    ".kf-pp-hero{display:grid;grid-template-columns:1.15fr 1fr;gap:3.5rem;max-width:1280px;margin:0 auto;padding:1.5rem 2rem 4rem}",
+    ".kf-pp-hero{display:grid;grid-template-columns:1.15fr 1fr;gap:3.5rem;max-width:1280px;margin:0 auto;padding:1.5rem 2rem 4rem;align-items:start}",
+    ".kf-pp-hero-media{display:flex;flex-direction:column}",
+
+    // "At a glance" strip under the gallery (fills the space below the product image)
+    ".kf-pp-gallery-extra{margin-top:1.5rem}",
+    ".kf-pp-gh-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0.65rem}",
+    ".kf-pp-gh-item{background:#FDFBF7;border:1px solid #E8E3DC;border-radius:10px;padding:1.25rem 0.5rem;text-align:center;display:flex;flex-direction:column;align-items:center;gap:0.55rem;transition:border-color .25s ease,transform .25s ease}",
+    ".kf-pp-gh-item:hover{border-color:#D4A574;transform:translateY(-2px)}",
+    ".kf-pp-gh-item svg{width:26px;height:26px;color:#D4A574}",
+    ".kf-pp-gh-label{font-family:'Montserrat',sans-serif;font-size:0.63rem;font-weight:600;letter-spacing:0.6px;text-transform:uppercase;color:#2C2C2C;line-height:1.4}",
+    ".kf-pp-gh-guarantee{display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;margin-top:1.1rem;padding-top:1.1rem;border-top:1px solid #E8E3DC}",
+    ".kf-pp-gh-guarantee span{font-family:'Montserrat',sans-serif;font-size:0.72rem;color:#888;display:flex;align-items:center;gap:0.45rem}",
+    ".kf-pp-gh-guarantee svg{width:17px;height:17px;color:#D4A574;flex-shrink:0}",
 
     // Gallery
     ".kf-pp-gallery{display:flex;gap:1rem;align-items:flex-start}",
@@ -220,7 +232,7 @@
 
     // Responsive
     "@media(max-width:960px){.kf-pp-hero{grid-template-columns:1fr;gap:2rem;padding:1.5rem 1.5rem 3rem}.kf-pp-title{font-size:2.3rem}.kf-pp-trust-inner{grid-template-columns:repeat(2,1fr);gap:1.5rem}.kf-pp-benefit-grid{grid-template-columns:repeat(2,1fr)}.kf-pp-step-grid{grid-template-columns:1fr;gap:2.5rem}.kf-pp-tm-grid{grid-template-columns:1fr}.kf-pp-related-grid{grid-template-columns:repeat(2,1fr)}.kf-pp-section-head h2{font-size:2rem}.kf-pp-editorial-grid{grid-template-columns:1fr 1fr}.kf-pp-editorial-img:last-child{display:none}}",
-    "@media(max-width:560px){.kf-pp-gallery{flex-direction:column-reverse}.kf-pp-thumbs{flex-direction:row;overflow-x:auto;width:100%}.kf-pp-thumb{flex:0 0 60px;width:60px;height:60px}.kf-pp-title{font-size:2rem}.kf-pp-benefit-grid{grid-template-columns:1fr}.kf-pp-trust-inner{grid-template-columns:1fr}.kf-pp-atc-row{flex-direction:column}.kf-pp-atc-row .product-quantity-input{flex:0 0 54px;width:100%}.kf-pp-stickybar-name{max-width:120px}.kf-pp-stickybar-btn{padding:0.85rem 1.2rem}.kf-pp-action-card{width:80vw}}"
+    "@media(max-width:560px){.kf-pp-gallery{flex-direction:column-reverse}.kf-pp-thumbs{flex-direction:row;overflow-x:auto;width:100%}.kf-pp-thumb{flex:0 0 60px;width:60px;height:60px}.kf-pp-title{font-size:2rem}.kf-pp-benefit-grid{grid-template-columns:1fr}.kf-pp-trust-inner{grid-template-columns:1fr}.kf-pp-atc-row{flex-direction:column}.kf-pp-atc-row .product-quantity-input{flex:0 0 54px;width:100%}.kf-pp-stickybar-name{max-width:120px}.kf-pp-stickybar-btn{padding:0.85rem 1.2rem}.kf-pp-action-card{width:80vw}.kf-pp-gh-grid{grid-template-columns:repeat(2,1fr)}.kf-pp-gh-guarantee{gap:1rem}}"
   ].join("\n");
   document.head.appendChild(style);
 
@@ -435,7 +447,28 @@
       '<div class="kf-pp-ship-note">' + svgIcons.truck + ' Complimentary shipping on orders over $75</div>' +
       '<div class="kf-pp-accord" id="kf-pp-accord"></div>';
 
-    hero.appendChild(galleryWrap);
+    // Left media column = gallery + an "at a glance" strip that fills the space under the image
+    var leftCol = document.createElement("div");
+    leftCol.className = "kf-pp-hero-media";
+    leftCol.appendChild(galleryWrap);
+    function ghItem(icon, label) { return '<div class="kf-pp-gh-item">' + icon + '<div class="kf-pp-gh-label">' + label + '</div></div>'; }
+    var extra = document.createElement("div");
+    extra.className = "kf-pp-gallery-extra";
+    extra.innerHTML =
+      '<div class="kf-pp-gh-grid">' +
+        ghItem(svgIcons.clock, "7–10 Day Wear") +
+        ghItem(svgIcons.drop, "21-Free Formula") +
+        ghItem(svgIcons.leafBig, "Vegan & Cruelty-Free") +
+        ghItem(svgIcons.sparkle, "High-Shine Finish") +
+      '</div>' +
+      '<div class="kf-pp-gh-guarantee">' +
+        '<span>' + svgIcons.truck + ' Free shipping over $75</span>' +
+        '<span>' + svgIcons.sparkle + ' Dermatologist recommended</span>' +
+        '<span>' + svgIcons.flag + ' Made in the USA</span>' +
+      '</div>';
+    leftCol.appendChild(extra);
+
+    hero.appendChild(leftCol);
     hero.appendChild(info);
 
     // In-info accordion
