@@ -35,6 +35,9 @@
     // Hide native Squarespace product layout while preview is active
     ".view-item.collection-type-products .ProductItem{display:none !important}",
     ".view-item.collection-type-products .sqs-block-summary-v2{display:none !important}",
+    // Hide the big site tagline ("Healthy Nail Polish") so the product sits near the top
+    // (the homepage redesign hides this too) — reclaims the wasted vertical space above the hero
+    ".Header-tagline{display:none !important}",
 
     // Wrapper
     // overflow-x:clip prevents horizontal overflow WITHOUT making overflow-y compute to auto
