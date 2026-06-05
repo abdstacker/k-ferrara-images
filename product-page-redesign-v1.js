@@ -420,7 +420,8 @@
         if (bulk) allParas.push(bulk);
       }
     }
-    var ingRe = /(free of|^ingredients?:|^may contain:|^contains:)/i;
+    // anchored so a marketing line like "…21-Free of the most toxic ingredients…" is NOT caught
+    var ingRe = /^(our polish is free of|free of\b|ingredients?\s*:|may contain\s*:|contains\s*:)/i;
     var marketingParas = [], ingredientParas = [];
     allParas.forEach(function(t) { (ingRe.test(t) ? ingredientParas : marketingParas).push(t); });
 
