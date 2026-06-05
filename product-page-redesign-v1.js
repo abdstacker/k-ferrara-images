@@ -37,7 +37,9 @@
     ".view-item.collection-type-products .sqs-block-summary-v2{display:none !important}",
 
     // Wrapper
-    ".kf-pp-wrap{font-family:'Montserrat',sans-serif;color:#2C2C2C;background:#fff;overflow-x:hidden}",
+    // overflow-x:clip prevents horizontal overflow WITHOUT making overflow-y compute to auto
+    // (which 'hidden' would, turning the wrap into a nested scroll container)
+    ".kf-pp-wrap{font-family:'Montserrat',sans-serif;color:#2C2C2C;background:#fff;overflow-x:clip}",
     ".kf-pp-wrap *{box-sizing:border-box}",
 
     // Scroll-reveal
