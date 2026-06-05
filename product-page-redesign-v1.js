@@ -51,8 +51,13 @@
     ".kf-pp-breadcrumb span{color:#D4A574;margin:0 0.5rem}",
 
     // Hero — 2-column gallery + info
-    ".kf-pp-hero{display:grid;grid-template-columns:1.15fr 1fr;gap:3.5rem;max-width:1280px;margin:0 auto;padding:1.5rem 2rem 4rem;align-items:start}",
+    ".kf-pp-hero{display:grid;grid-template-columns:1.15fr 1fr;gap:3.5rem;max-width:1280px;margin:0 auto;padding:1.5rem 2rem 4rem;align-items:stretch}",
     ".kf-pp-hero-media{display:flex;flex-direction:column}",
+    // lifestyle image at the bottom of the media column — grows to fill any gap so the columns balance
+    ".kf-pp-hero-lifestyle{flex:1 1 auto;min-height:150px;margin-top:1.5rem;border-radius:10px;overflow:hidden;position:relative;background:#F5F3F0}",
+    ".kf-pp-hero-lifestyle img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s ease}",
+    ".kf-pp-hero-lifestyle:hover img{transform:scale(1.04)}",
+    ".kf-pp-hero-lifestyle-cap{position:absolute;left:0;bottom:0;right:0;padding:1.1rem 1.25rem;background:linear-gradient(transparent,rgba(0,0,0,0.55));color:#fff;font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:500;letter-spacing:0.5px}",
 
     // "At a glance" strip under the gallery (fills the space below the product image)
     ".kf-pp-gallery-extra{margin-top:1.5rem}",
@@ -467,6 +472,11 @@
         '<span>' + svgIcons.flag + ' Made in the USA</span>' +
       '</div>';
     leftCol.appendChild(extra);
+    // lifestyle image fills the remaining height so the gallery column matches the info column
+    var lifeBand = document.createElement("div");
+    lifeBand.className = "kf-pp-hero-lifestyle";
+    lifeBand.innerHTML = '<img src="' + lifestyle.red + '" alt="K.Ferrara Color manicure"><div class="kf-pp-hero-lifestyle-cap">Salon-quality shine, at home.</div>';
+    leftCol.appendChild(lifeBand);
 
     hero.appendChild(leftCol);
     hero.appendChild(info);
