@@ -318,15 +318,21 @@
             var c = document.createElement("canvas"); c.width = w; c.height = h;
             var ctx = c.getContext("2d"); ctx.drawImage(img, 0, 0, w, h);
             var d = ctx.getImageData(0, 0, w, h).data;
-            var rs = 0, gs = 0, bs = 0, n = 0;
+            var rs = 0, gs = 0, bs = 0, n = 0;   // saturated (lacquer) pixels
+            var rm = 0, gm = 0, bm = 0, m = 0;   // mid-tone fallback (non-white, non-black)
             for (var i = 0; i < d.length; i += 4) {
               var r = d[i], g = d[i + 1], b = d[i + 2], a = d[i + 3];
               if (a < 200) continue;
               var mx = Math.max(r, g, b), mn = Math.min(r, g, b);
+              if (mx > 244 || mx < 38) continue; // skip white background + near-black cap
+              rm += r; gm += g; bm += b; m++;
               var sat = mx === 0 ? 0 : (mx - mn) / mx;
-              if (sat > 0.28 && mx > 40 && mx < 250) { rs += r; gs += g; bs += b; n++; }
+              if (sat > 0.20) { rs += r; gs += g; bs += b; n++; }
             }
-            finish(n > 8 ? "rgb(" + Math.round(rs / n) + "," + Math.round(gs / n) + "," + Math.round(bs / n) + ")" : null);
+            // prefer the saturated lacquer average; otherwise the mid-tone average — always a real color
+            if (n > 4) finish("rgb(" + Math.round(rs / n) + "," + Math.round(gs / n) + "," + Math.round(bs / n) + ")");
+            else if (m > 4) finish("rgb(" + Math.round(rm / m) + "," + Math.round(gm / m) + "," + Math.round(bm / m) + ")");
+            else finish(null);
           } catch (e) { finish(null); }
         };
         img.onerror = function() { clearTimeout(to); finish(null); };
