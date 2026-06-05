@@ -71,7 +71,7 @@
     ".kf-pp-gh-item:hover{border-color:#D4A574;transform:translateY(-2px)}",
     ".kf-pp-gh-item svg{width:26px;height:26px;color:#D4A574}",
     ".kf-pp-gh-label{font-family:'Montserrat',sans-serif;font-size:0.63rem;font-weight:600;letter-spacing:0.6px;text-transform:uppercase;color:#2C2C2C;line-height:1.4}",
-    ".kf-pp-gh-guarantee{display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;margin-top:1.1rem;padding-top:1.1rem;border-top:1px solid #E8E3DC}",
+    ".kf-pp-gh-guarantee{display:flex;justify-content:center;gap:2rem;flex-wrap:wrap}",
     ".kf-pp-gh-guarantee span{font-family:'Montserrat',sans-serif;font-size:0.72rem;color:#888;display:flex;align-items:center;gap:0.45rem}",
     ".kf-pp-gh-guarantee svg{width:17px;height:17px;color:#D4A574;flex-shrink:0}",
 
@@ -499,16 +499,10 @@
     var leftCol = document.createElement("div");
     leftCol.className = "kf-pp-hero-media";
     leftCol.appendChild(galleryWrap);
-    function ghItem(icon, label) { return '<div class="kf-pp-gh-item">' + icon + '<div class="kf-pp-gh-label">' + label + '</div></div>'; }
+    // slim trust row under the gallery (the detailed spec list now lives in the info column)
     var extra = document.createElement("div");
     extra.className = "kf-pp-gallery-extra";
     extra.innerHTML =
-      '<div class="kf-pp-gh-grid">' +
-        ghItem(svgIcons.clock, "7–10 Day Wear") +
-        ghItem(svgIcons.drop, "21-Free Formula") +
-        ghItem(svgIcons.leafBig, "Vegan & Cruelty-Free") +
-        ghItem(svgIcons.sparkle, "High-Shine Finish") +
-      '</div>' +
       '<div class="kf-pp-gh-guarantee">' +
         '<span>' + svgIcons.truck + ' Free shipping over $75</span>' +
         '<span>' + svgIcons.sparkle + ' Dermatologist recommended</span>' +
