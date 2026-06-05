@@ -54,7 +54,7 @@
     ".kf-pp-hero{display:grid;grid-template-columns:1.15fr 1fr;gap:3.5rem;max-width:1280px;margin:0 auto;padding:1.5rem 2rem 4rem;align-items:stretch}",
     ".kf-pp-hero-media{display:flex;flex-direction:column}",
     // lifestyle image at the bottom of the media column — grows to fill any gap so the columns balance
-    ".kf-pp-hero-lifestyle{flex:1 1 auto;min-height:150px;margin-top:1.5rem;border-radius:10px;overflow:hidden;position:relative;background:#F5F3F0}",
+    ".kf-pp-hero-lifestyle{flex:1 1 0;min-height:160px;margin-top:1.5rem;border-radius:10px;overflow:hidden;position:relative;background:#F5F3F0}",
     ".kf-pp-hero-lifestyle img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s ease}",
     ".kf-pp-hero-lifestyle:hover img{transform:scale(1.04)}",
     ".kf-pp-hero-lifestyle-cap{position:absolute;left:0;bottom:0;right:0;padding:1.1rem 1.25rem;background:linear-gradient(transparent,rgba(0,0,0,0.55));color:#fff;font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:500;letter-spacing:0.5px}",
