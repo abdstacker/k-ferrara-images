@@ -152,6 +152,19 @@
     ".kf-pp-accord-body-inner p{margin:0 0 0.75rem 0}",
     ".kf-pp-accord-body-inner ul{padding-left:1rem;margin:0.5rem 0}",
     ".kf-pp-accord-body-inner li{margin-bottom:0.3rem}",
+    ".kf-pp-accord-body-inner img{max-width:100%;height:auto;border-radius:6px;margin:0.5rem 0}",
+
+    // Tagline bold lead + Manucurist-style icon spec list
+    ".kf-pp-tagline strong{color:#2C2C2C;font-weight:600}",
+    ".kf-pp-specs{margin:0 0 1.75rem 0;display:flex;flex-direction:column;gap:0.55rem}",
+    ".kf-pp-spec-row{display:flex;align-items:center;gap:0.65rem;font-family:'Montserrat',sans-serif;font-size:0.85rem}",
+    ".kf-pp-spec-row svg{width:18px;height:18px;color:#D4A574;flex-shrink:0}",
+    ".kf-pp-spec-label{font-weight:600;color:#2C2C2C;min-width:104px;letter-spacing:0.3px}",
+    ".kf-pp-spec-val{color:#666;font-weight:300}",
+    // Ingredients accordion blocks
+    ".kf-pp-ing-block{margin:0 0 1.1rem 0}",
+    ".kf-pp-ing-h{font-family:'Montserrat',sans-serif;font-size:0.66rem;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:#D4A574;margin:0 0 0.35rem 0}",
+    ".kf-pp-ing-block p{font-family:'Montserrat',sans-serif;font-size:0.8rem;line-height:1.7;color:#666;margin:0;font-weight:300}",
 
     // Sticky add-to-cart bar
     ".kf-pp-stickybar{position:fixed;left:0;right:0;bottom:0;z-index:9000;background:#fff;border-top:1px solid #E8E3DC;box-shadow:0 -6px 24px rgba(0,0,0,0.08);transform:translateY(105%);transition:transform .35s ease;padding:0.7rem 1.5rem}",
@@ -392,15 +405,32 @@
     imgSrcs = dedupe(imgSrcs);
     var primaryImg = imgSrcs[0] || "";
 
-    var tagline = "";
+    // --- Parse the native description into clean marketing + ingredient sections ---
+    // (scrape ONLY the excerpt's paragraphs — avoids the broken image / duplicated
+    //  title+price that a broader block grab was dumping into "Full Product Details")
+    var allParas = [];
     if (excerptEl) {
-      tagline = excerptEl.textContent.trim().replace(/\s+/g, " ");
-      if (tagline.length > 180) tagline = tagline.slice(0, 180).replace(/\s\S*$/, "") + "…";
+      var pp = excerptEl.querySelectorAll("p");
+      for (var pi = 0; pi < pp.length; pi++) {
+        var pt = pp[pi].textContent.replace(/\s+/g, " ").trim();
+        if (pt) allParas.push(pt);
+      }
+      if (!allParas.length) {
+        var bulk = excerptEl.textContent.replace(/\s+/g, " ").trim();
+        if (bulk) allParas.push(bulk);
+      }
     }
-    if (!tagline) tagline = "A luxurious, 21-Free shade with a salon-quality high-shine finish — hand-crafted to be safer, kinder, and beautifully wearable.";
+    var ingRe = /(free of|^ingredients?:|^may contain:|^contains:)/i;
+    var marketingParas = [], ingredientParas = [];
+    allParas.forEach(function(t) { (ingRe.test(t) ? ingredientParas : marketingParas).push(t); });
 
-    var descEl = nativeProduct.querySelector(".ProductItem-details-excerpt, .ProductItem-summary, .sqs-block-html");
-    var descHTML = descEl ? descEl.innerHTML : "";
+    // Manucurist-style lead: bold the first sentence, keep one more for the column
+    var leadPara = marketingParas[0] || "A luxurious, 21-Free shade with a salon-quality, high-shine finish — hand-crafted to be safer, kinder, and beautifully wearable.";
+    var sents = leadPara.match(/[^.!?]+[.!?]+/g) || [leadPara];
+    var lead1 = (sents[0] || leadPara).trim();
+    var lead2 = (sents[1] || "").trim();
+    var taglineHTML = '<strong>' + escapeHtml(lead1) + '</strong>' + (lead2 ? " " + escapeHtml(lead2) : "");
+
     var currentSlug = slugOf(location.pathname);
 
     // --- Build the gallery media list: product images + lifestyle + video ---
@@ -438,21 +468,28 @@
         '<div class="kf-pp-stage-zoomhint">' + svgIcons.zoom + '</div>' +
       '</div>';
 
+    // Manucurist-style spec list (brand-wide, accurate for every K.Ferrara polish)
+    var specs = [
+      { icon: svgIcons.sparkle, label: "Finish", val: "High-shine, gel-like" },
+      { icon: svgIcons.drop, label: "Coverage", val: "Full &amp; opaque" },
+      { icon: svgIcons.clock, label: "Wear", val: "7–10 days" },
+      { icon: svgIcons.leafBig, label: "Formula", val: "21-Free, vegan &amp; cruelty-free" },
+      { icon: svgIcons.smile, label: "Application", val: "Beginner-friendly" }
+    ];
+    var specsHTML = '<div class="kf-pp-specs">' + specs.map(function(s) {
+      return '<div class="kf-pp-spec-row">' + s.icon + '<span class="kf-pp-spec-label">' + s.label + '</span><span class="kf-pp-spec-val">' + s.val + '</span></div>';
+    }).join("") + '</div>';
+
     // Info column
     var info = document.createElement("div");
     info.className = "kf-pp-info";
     info.innerHTML =
       '<div class="kf-pp-badge">' + svgIcons.sparkle + ' Loved by salon pros</div>' +
       '<h1 class="kf-pp-title">' + escapeHtml(title) + '</h1>' +
-      '<p class="kf-pp-tagline">' + escapeHtml(tagline) + '</p>' +
       '<div class="kf-pp-price-row"><div class="kf-pp-price">' + escapeHtml(price) + '</div><div class="kf-pp-price-note">Inclusive of all taxes</div></div>' +
+      '<p class="kf-pp-tagline">' + taglineHTML + '</p>' +
+      specsHTML +
       '<div class="kf-pp-shades"><div class="kf-pp-shades-label">Shade — <b>' + escapeHtml(title) + '</b></div><div class="kf-pp-swatches" id="kf-pp-swatches"></div></div>' +
-      '<div class="kf-pp-chips">' +
-        '<span class="kf-pp-chip">21-Free</span>' +
-        '<span class="kf-pp-chip">Vegan</span>' +
-        '<span class="kf-pp-chip">7–10 Day Wear</span>' +
-        '<span class="kf-pp-chip">Made in USA</span>' +
-      '</div>' +
       '<div class="kf-pp-atc-row" id="kf-pp-atc-slot"></div>' +
       '<div class="kf-pp-ship-note">' + svgIcons.truck + ' Complimentary shipping on orders over $75</div>' +
       '<div class="kf-pp-accord" id="kf-pp-accord"></div>';
@@ -486,12 +523,26 @@
     hero.appendChild(leftCol);
     hero.appendChild(info);
 
+    // Ingredients accordion — clean labeled blocks parsed from the native copy (no images)
+    var ingredientsBody = ingredientParas.map(function(t) {
+      var label = null, bodyTxt = t;
+      if (/free of/i.test(t)) { label = "Free From"; bodyTxt = t.replace(/^.*?free of\s*/i, ""); }
+      else if (/^ingredients?:/i.test(t)) { label = "Ingredients"; bodyTxt = t.replace(/^ingredients?:\s*/i, ""); }
+      else if (/^may contain:/i.test(t)) { label = "May Contain"; bodyTxt = t.replace(/^may contain:\s*/i, ""); }
+      else if (/^contains:/i.test(t)) { label = "Contains"; bodyTxt = t.replace(/^contains:\s*/i, ""); }
+      return '<div class="kf-pp-ing-block">' + (label ? '<div class="kf-pp-ing-h">' + label + '</div>' : "") + '<p>' + escapeHtml(bodyTxt) + '</p></div>';
+    }).join("");
+    // Full description = the marketing paragraphs (clean text)
+    var descBody = marketingParas.map(function(t) { return '<p>' + escapeHtml(t) + '</p>'; }).join("");
+
     // In-info accordion
     var accordItems = [
       { title: "Why You'll Love It", body: '<ul><li>High-shine, gel-like finish without UV curing</li><li>21-Free clean formula — safer for you and the planet</li><li>Vegan, cruelty-free, dermatologist recommended</li><li>Long-wearing color that resists chipping for 7–10 days</li></ul>' },
-      { title: "How To Apply", body: '<p>Start with clean, dry nails. Apply a thin layer of K.Ferrara Base Coat. Follow with two thin coats of color, allowing each to dry. Finish with K.Ferrara Top Coat for a glassy, long-lasting finish.</p>' },
-      { title: "Full Product Details", body: descHTML || "<p>Long-wearing, vegan, cruelty-free polish in a 21-Free formula. Free from formaldehyde, toluene, DBP, parabens, and 17 other commonly avoided ingredients.</p>" }
+      { title: "How To Apply", body: '<p>Start with clean, dry nails. Apply a thin layer of K.Ferrara Base Coat. Follow with two thin coats of color, allowing each to dry. Finish with K.Ferrara Top Coat for a glassy, long-lasting finish.</p>' }
     ];
+    if (descBody) accordItems.push({ title: "Description", body: descBody });
+    if (ingredientsBody) accordItems.push({ title: "Ingredients & Formula", body: ingredientsBody });
+    if (!descBody && !ingredientsBody) accordItems.push({ title: "Full Product Details", body: "<p>Long-wearing, vegan, cruelty-free polish in a 21-Free formula. Free from formaldehyde, toluene, DBP, parabens, and 17 other commonly avoided ingredients.</p>" });
     info.querySelector("#kf-pp-accord").innerHTML = accordItems.map(function(item, i) {
       return '<div class="kf-pp-accord-item' + (i === 0 ? " open" : "") + '">' +
         '<button class="kf-pp-accord-trigger" aria-expanded="' + (i === 0 ? "true" : "false") + '"><span>' + escapeHtml(item.title) + '</span><span class="kf-pp-accord-icon">+</span></button>' +
